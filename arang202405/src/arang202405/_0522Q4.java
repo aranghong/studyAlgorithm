@@ -1,4 +1,4 @@
-package arang202405; 
+package arang202405;
 
 public class _0522Q4 {
 
