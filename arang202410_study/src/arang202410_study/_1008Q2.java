@@ -1,4 +1,5 @@
 package arang202410_study;
+import java.util.*;
 
 public class _1008Q2 {
 
@@ -19,72 +20,42 @@ public class _1008Q2 {
 
 class Solution_1018_2 {
 	public int solution(int[] mats, String[][] park) {
-		int answer = -1; 
+        int answer = -1;
 
-		reverse(mats);
+        // mats 배열을 내림차순으로 정렬
+        Arrays.sort(mats);  // 오름차순 정렬
+        for (int i = 0; i < mats.length / 2; i++) {  // 내림차순으로 변경
+            int temp = mats[i];
+            mats[i] = mats[mats.length - 1 - i];
+            mats[mats.length - 1 - i] = temp;
+        }
 
-//		System.out.println(Arrays.toString(mats));
-		int result = -1;
+        // 공원 배열에서 확인
+        for (int i : mats) {  // 각 돗자리 크기에 대해
+            for (int j = 0; j <= park.length - i; j++) {  // 공원의 모든 셀을 탐색
+                for (int h = 0; h <= park[0].length - i; h++) {
+                    boolean chk = true;
 
-		for (int i = 0; i < park.length; i++) {
-			for (int k = 0; k < park[i].length; k++) {
-				if (park[i][k].equals("-1")) {
-					result = checkFunc(mats, park, i, k);
-					if (result >= 0 && result < mats.length) {
-						answer = mats[result];
-						return answer;
-					}
-				}
-			}
-		}
-		return answer;
-	}
+                    // 돗자리를 놓을 수 있는지 확인 
+                    if (park[j][h].equals("-1") && j + i <= park.length && h + i <= park[0].length) {
+                        for (int k = 0; k < i; k++) {  // 돗자리 크기만큼 내부 확인
+                            for (int l = 0; l < i; l++) {
+                                if (!park[j + k][h + l].equals("-1")) {  // 사람이 있으면 돗자리 설치 불가
+                                    chk = false;
+                                    break;
+                                }
+                            }
+                            if (!chk) break;  // 중간에 사람이 있으면 루프 중단
+                        }
+                        if (chk) {  // 설치 가능할 경우 바로 답을 반환
+                            return i;
+                        }
+                    }
+                }
+            }
+        }
 
-	// 내림차순 배열을 위한 reverse 함수
-	private void reverse(int[] arr) {
-		for (int i = 0; i < arr.length - 1; i++) {
-	        int maxIdx = i;
-	        // 나머지 요소 중에서 가장 큰 값을 찾음
-	        for (int j = i + 1; j < arr.length; j++) {
-	            if (arr[j] > arr[maxIdx]) {
-	                maxIdx = j;
-	            }
-	        }
-	        // 가장 큰 값과 현재 i번째 요소를 교환
-	        int temp = arr[i];
-	        arr[i] = arr[maxIdx];
-	        arr[maxIdx] = temp;
-	    }
-	}
-
-	int checkFunc(int[] mats, String[][] park, int r, int c) {
-
-		int cnt = 0;
-		int chk = 0;
-
-		for (int i = 0; i < mats.length; i++) {
-			if (r + mats[i] <= park.length && c + mats[i] <= park[r].length) {
-				for (int x = r; x < r + mats[i]; x++) {
-					for (int y = c; y < c + mats[i]; y++) {
-						if (park[x][y].equals("-1")) {
-							cnt++;
-						} else {
-							chk = 1;
-							break;
-						}
-					}
-					if (chk == 1) {
-						break;
-					}
-				}
-				if (chk == 0 && cnt == mats[i] * mats[i]) {
-					System.out.println(cnt);
-					return i;
-				}
-			}
-		}
-
-		return -1;
-	}
+        return answer;
+    }
 
 }
